@@ -1,0 +1,35 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Vulnerability {
+    id        Int    @id @default(autoincrement())
+    file      String
+    startLine Int
+    startCol  Int
+    endLine   Int
+    endCol    Int
+    severity  String
+    message   String
+    code      String
+    Scan      Scan?  @relation(fields: [scanId], references: [id])
+    scanId    Int?
+}
+
+model Scan {
+    id           Int             @id @default(autoincrement())
+    username     String
+    repositoryId String
+    result       Vulnerability[]
+    updatedAt    DateTime        @updatedAt
+
+    @@index([repositoryId])
+}
